@@ -4,7 +4,7 @@ services:
   upload_taiwan_stock_margin_purchase_short_sale:  # 定義一個服務，名稱為 crawler_twse
     image: linsamtw/tibame_crawler:${DOCKER_IMAGE_VERSION}  # 使用的映像檔名稱與標籤（版本）
     hostname: "upload_taiwan_stock_margin_purchase_short_sale"
-    command: pipenv run python crawler/download_and_upload_taiwan_stock_margin_purchase_short_sale_to_mysql.py
+    command: uv run --env-file=.env python crawler/download_and_upload_taiwan_stock_margin_purchase_short_sale_to_mysql.py
     deploy:
       mode: replicated
       replicas: 1

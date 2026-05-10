@@ -1,5 +1,35 @@
 # services
 
+本 repo 收錄 FinMind 教學中，所有後端服務的部屬設定檔（docker-compose / swarm yml），
+方便讀者一鍵啟動完整的爬蟲、資料庫、訊息佇列、API、視覺化等基礎設施。
+
+## 服務簡介
+
+- **Portainer** (`portainer.yml`)：Docker Swarm 視覺化管理介面，可在瀏覽器查看與操作各 service。
+- **MySQL** (`mysql.yml`, `mysql-gce.yml`)：主要資料庫，儲存爬取下來的金融資料。
+  - `mysql.yml`：本機或自架機器使用
+  - `mysql-gce.yml`：GCP GCE 環境使用
+- **RabbitMQ** (`rabbitmq.yml`, `rabbitmq-gce.yml`)：分散式任務佇列，串接 producer 與 worker。
+- **Crawler Worker** (`docker-compose-worker-network-version-swarm.yml`)：分散式爬蟲 worker，從 RabbitMQ 領取任務並執行爬蟲。
+- **Crawler Producer** (`docker-compose-producer-duplicate-network-version.yml`)：發送爬蟲任務到 RabbitMQ。
+- **API** (`docker-compose-api-network-version-swarm.yml`)：對外提供查詢服務的 FastAPI server。
+- **Redash**
+  - `docker-compose-redash.yml`：swarm 版本，用於 production／多機部屬
+  - `docker-compose-redash-local.yml`：docker-compose 版本，用於本機教學或單機開發
+- **Upload 任務** (`docker-compose-upload_taiwan_stock_price_to_mysql.yml`,
+  `docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml`)：
+  將爬取下來的資料寫入 MySQL 的批次任務。
+
+## 部屬流程概覽
+
+1. 安裝 docker（見下方「ubuntu 安裝 docker」）。
+2. 初始化 swarm 並建立 overlay network。
+3. 依序部屬 MySQL、RabbitMQ 等基礎服務。
+4. 部屬 crawler worker / producer 開始爬取資料。
+5. 部屬 API 對外提供查詢，或啟動 Redash 進行資料視覺化。
+
+以下為各步驟對應的指令。
+
 ## 刪除所有 container
 
     docker rm -f $(docker ps -a -q)
@@ -84,6 +114,15 @@ http://127.0.0.1:9000
 
 ## 啟動 redash
 	docker stack deploy -c docker-compose-redash.yml redash
+
+## 啟動 redash (docker-compose 版本，非 swarm)
+	docker-compose -f docker-compose-redash-local.yml up -d
+
+## 關閉 redash (docker-compose 版本)
+	docker-compose -f docker-compose-redash-local.yml down
+
+## 移除已建立完 table 的 create_table container (docker-compose 版本)
+	docker-compose -f docker-compose-redash-local.yml rm -f create_table
 
 ## upload_taiwan_stock_margin_purchase_short_sale_to_mysql
 	DOCKER_IMAGE_VERSION=0.0.9 docker stack deploy --with-registry-auth -c docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml upload

@@ -19,6 +19,8 @@
 - **Upload 任務** (`docker-compose-upload_taiwan_stock_price_to_mysql.yml`,
   `docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml`)：
   將爬取下來的資料寫入 MySQL 的批次任務。
+  - `docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml`：swarm 版本
+  - `docker-compose-upload_taiwan_stock_margin_purchase_short_sale-local.yml`：docker-compose 版本，用於本機教學或單機開發
 
 ## 部屬流程概覽
 
@@ -126,3 +128,9 @@ http://127.0.0.1:9000
 
 ## upload_taiwan_stock_margin_purchase_short_sale_to_mysql
 	DOCKER_IMAGE_VERSION=0.0.9 docker stack deploy --with-registry-auth -c docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml upload
+
+## 啟動 upload_taiwan_stock_margin_purchase_short_sale (docker-compose 版本，非 swarm)
+	DOCKER_IMAGE_VERSION=0.0.9 docker compose -f docker-compose-upload_taiwan_stock_margin_purchase_short_sale-local.yml up -d
+
+## 關閉 upload_taiwan_stock_margin_purchase_short_sale (docker-compose 版本)
+	docker compose -f docker-compose-upload_taiwan_stock_margin_purchase_short_sale-local.yml down

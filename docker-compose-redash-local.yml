@@ -2,8 +2,9 @@ version: "3.8"
 # 此為 docker-compose 版本（非 swarm）
 # 與 docker-compose-redash.yml 主要差異：
 # 1. 移除 deploy 區塊（deploy 為 swarm 專用，包含 replicas、placement constraints）
-# 2. network 改為內部建立，不需事先用 docker network create 建立 external network
-# 3. 啟動指令使用 docker compose -f docker-compose-redash-local.yml up -d
+# 2. 啟動指令使用 docker compose -f docker-compose-redash-local.yml up -d
+# 啟動前需先建立外部網路：docker network create my_network
+# 與 crawler/mysql.yml 共用同一個 my_network，方便 redash 串接 mysql
 services:
   redash:
     # 選用此版本的 redash image
@@ -198,12 +199,13 @@ services:
         - my_network
 
 # network 設定
-# 與 swarm 版本不同，這裡不使用 external: true
-# docker-compose 啟動時會自動建立此 network
-# 所有 service 都加入同一個 network，才能互相溝通
+# 使用 external: true 加入已存在的 my_network
+# 需事先執行 docker network create my_network 建立網路
+# 這樣才能與 crawler/mysql.yml 等其他 compose 檔案共用同一個網路
+# 讓 redash 可以連線到 mysql 等其他 service
 networks:
   my_network:
-    driver: bridge
+    external: true
 
 # volumes 設定
 # 讓資料持久化，避免 container 刪除後資料遺失

@@ -3,7 +3,7 @@ version: "3.8"
 # 與 docker-compose-redash.yml 主要差異：
 # 1. 移除 deploy 區塊（deploy 為 swarm 專用，包含 replicas、placement constraints）
 # 2. network 改為內部建立，不需事先用 docker network create 建立 external network
-# 3. 啟動指令使用 docker-compose -f docker-compose-redash-local.yml up -d
+# 3. 啟動指令使用 docker compose -f docker-compose-redash-local.yml up -d
 services:
   redash:
     # 選用此版本的 redash image
@@ -60,7 +60,7 @@ services:
     # 主要差異在此
     # 初始化需要建立 table
     # 建立完成後，此 container 會自行結束
-    # 可使用 docker-compose rm -f create_table 移除
+    # 可使用 docker compose rm -f create_table 移除
     command: python /app/manage.py database create_tables
     environment:
       PYTHONUNBUFFERED: 0

@@ -116,13 +116,13 @@ http://127.0.0.1:9000
 	docker stack deploy -c docker-compose-redash.yml redash
 
 ## 啟動 redash (docker-compose 版本，非 swarm)
-	docker-compose -f docker-compose-redash-local.yml up -d
+	docker compose -f docker-compose-redash-local.yml up -d
 
 ## 關閉 redash (docker-compose 版本)
-	docker-compose -f docker-compose-redash-local.yml down
+	docker compose -f docker-compose-redash-local.yml down
 
 ## 移除已建立完 table 的 create_table container (docker-compose 版本)
-	docker-compose -f docker-compose-redash-local.yml rm -f create_table
+	docker compose -f docker-compose-redash-local.yml rm -f create_table
 
 ## upload_taiwan_stock_margin_purchase_short_sale_to_mysql
 	DOCKER_IMAGE_VERSION=0.0.9 docker stack deploy --with-registry-auth -c docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml upload

@@ -20,6 +20,7 @@ services:
         # constraints: [node.labels.rabbitmq==true]
     networks:
       - my_swarm_network                    # 使用自定義 overlay 網路（須事先建立）
+      - my_attachable_network               # 額外掛 attachable overlay，讓 DockerOperator 拉起的 standalone container 也能連到 rabbitmq
 
   flower:
     image: mher/flower:0.9.5                # Flower 是 Celery 的 Web 監控工具
@@ -41,7 +42,10 @@ services:
         # constraints: [node.labels.rabbitmq==true]
     networks:
       - my_swarm_network
+      - my_attachable_network
 
 networks:
   my_swarm_network:
     external: true  # 使用外部建立的 overlay 網路（需先手動建立）
+  my_attachable_network:
+    external: true  # 用 --attachable 建立的 overlay，給 DockerOperator standalone container 使用

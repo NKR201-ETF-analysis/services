@@ -91,6 +91,7 @@ http://127.0.0.1:9000
 
 ## 部屬 API:
 	DOCKER_IMAGE_VERSION=0.0.1 docker stack deploy --with-registry-auth -c docker-compose-api-network-version-swarm.yml api
+	DOCKER_IMAGE_VERSION=0.0.1.arm64 docker stack deploy --with-registry-auth -c docker-compose-api-network-version-swarm.yml api
 
 ## rm stack
 	docker stack rm airflow api crawler mysql rabbitmq

@@ -12,6 +12,7 @@ services:
       MYSQL_USER: user              # 建立一個普通用戶
       MYSQL_PASSWORD: ppWgnb_mfGe2m_          # 該用戶的密碼
       MYSQL_ROOT_PASSWORD: ppWgnb_mfGe2m_     # root 用戶密碼
+      MYSQL_ROOT_HOST: '%'                    # 允許 root 從任何 host 連線（overlay network 需要）
     volumes:
       - mysql:/var/lib/mysql        # 將資料庫資料持久化到 volume
     # 以下是 Docker Swarm 模式的設定

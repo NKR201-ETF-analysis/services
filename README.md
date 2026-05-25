@@ -49,6 +49,7 @@
 ## 忘記 docker swarm join 以上指令怎麼辦?
 
 	docker swarm join-token worker
+	docker swarm join-token manager
 
 ## 部屬 Portainer 服務
 

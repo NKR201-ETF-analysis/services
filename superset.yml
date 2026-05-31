@@ -21,13 +21,16 @@ services:
       SUPERSET_ENV: development   # Superset 執行環境
       SUPERSET_PORT: 8088         # Superset 服務埠
     command: >
-      sh -c "superset db upgrade &&
+      sh -c "pip install --no-cache-dir PyMySQL &&
+      superset db upgrade &&
       superset fab create-admin
       --username admin --firstname Superset --lastname Admin
       --email admin@superset.com --password admin || true &&
       superset init &&
       /usr/bin/run-server.sh"
       # 依序執行（避免 SQLite 鎖衝突）：
+      # 0. pip install PyMySQL：補上 MySQL driver（官方映像未內建），
+      #    讓 "Connect a database" 清單出現 MySQL；PyMySQL 為純 Python 免編譯
       # 1. db upgrade：建立 / 升級 metadata 資料表
       # 2. create-admin：建立預設管理者 admin / admin（已存在則略過，故加 || true）
       # 3. init：初始化角色與權限

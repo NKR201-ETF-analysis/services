@@ -138,6 +138,31 @@ http://127.0.0.1:9000
 ## 關閉 superset
 	docker stack rm superset
 
+## superset 連線 MySQL
+
+官方 `apache/superset` 映像未內建 MySQL driver，"Connect a database" 清單預設不會出現
+MySQL。`superset.yml` 已在啟動時自動 `pip install PyMySQL` 補上 driver（純 Python、免編譯）。
+
+連線時於 UI 填入 SQLAlchemy URI，前綴需用 `mysql+pymysql`：
+
+	mysql+pymysql://<帳號>:<密碼>@<host>:3306/<資料庫名>
+
+對照 `mysql.yml` 的設定，直接填以下任一即可：
+
+	# root 帳號
+	mysql+pymysql://root:ppWgnb_mfGe2m_@mysql_mysql:3306/mydb
+
+	# 一般帳號（權限限於 mydb）
+	mysql+pymysql://user:ppWgnb_mfGe2m_@mysql_mysql:3306/mydb
+
+各欄位來源（皆來自 `mysql.yml`）：
+
+- 帳號／密碼：`MYSQL_USER` / `MYSQL_PASSWORD`，或 root / `MYSQL_ROOT_PASSWORD`
+- 資料庫：`MYSQL_DATABASE`（預設 `mydb`）
+- host：用 `mysql.yml` 部署時，stack 名與 service 名皆為 `mysql`，
+  Superset 在不同 stack，須用完整 DNS 名 `<stack>_<service>` 即 `mysql_mysql`
+  （兩者都在 `my_swarm_network` overlay 網路上，故用服務名即可互通，不需 IP）
+
 ## upload_taiwan_stock_margin_purchase_short_sale_to_mysql
 	DOCKER_IMAGE_VERSION=0.0.9 docker stack deploy --with-registry-auth -c docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml upload
 

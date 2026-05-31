@@ -152,9 +152,6 @@ MySQL。`superset.yml` 已在啟動時自動 `pip install PyMySQL` 補上 driver
 	# root 帳號
 	mysql+pymysql://root:ppWgnb_mfGe2m_@mysql_mysql:3306/mydb
 
-	# 一般帳號（權限限於 mydb）
-	mysql+pymysql://user:ppWgnb_mfGe2m_@mysql_mysql:3306/mydb
-
 各欄位來源（皆來自 `mysql.yml`）：
 
 - 帳號／密碼：`MYSQL_USER` / `MYSQL_PASSWORD`，或 root / `MYSQL_ROOT_PASSWORD`

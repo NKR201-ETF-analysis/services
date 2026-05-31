@@ -16,6 +16,7 @@
 - **Redash**
   - `docker-compose-redash.yml`：swarm 版本，用於 production／多機部屬
   - `docker-compose-redash-local.yml`：docker-compose 版本，用於本機教學或單機開發
+- **Superset** (`superset.yml`)：BI 視覺化平台（教學精簡版，metadata 使用官方映像內建的 SQLite，免額外資料庫）。
 - **Upload 任務** (`docker-compose-upload_taiwan_stock_price_to_mysql.yml`,
   `docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml`)：
   將爬取下來的資料寫入 MySQL 的批次任務。
@@ -128,6 +129,14 @@ http://127.0.0.1:9000
 
 ## 移除已建立完 table 的 create_table container (docker-compose 版本)
 	docker compose -f docker-compose-redash-local.yml rm -f create_table
+
+## 啟動 superset
+	# 官方映像 + SQLite，免預建資料庫；首次啟動會自動初始化（約 1~2 分鐘）
+	# 預設管理者帳密 admin / admin，介面 http://localhost:8088
+	docker stack deploy --with-registry-auth -c superset.yml superset
+
+## 關閉 superset
+	docker stack rm superset
 
 ## upload_taiwan_stock_margin_purchase_short_sale_to_mysql
 	DOCKER_IMAGE_VERSION=0.0.9 docker stack deploy --with-registry-auth -c docker-compose-upload_taiwan_stock_margin_purchase_short_sale.yml upload

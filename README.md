@@ -140,17 +140,21 @@ http://127.0.0.1:9000
 
 ## superset 連線 MySQL
 
-官方 `apache/superset` 映像未內建 MySQL driver，"Connect a database" 清單預設不會出現
-MySQL。`superset.yml` 已在啟動時自動 `pip install PyMySQL` 補上 driver（純 Python、免編譯）。
+`superset.yml` 使用 `apache/superset:4.1.4-dev` 映像（dev 版），已內建 `mysqlclient`
+等多種 DB driver，故 "Connect a database" 可直接選 MySQL，免額外安裝。
+（lean 版 `apache/superset:4.1.4` 不含 MySQL driver，清單才不會出現 MySQL。）
 
-連線時於 UI 填入 SQLAlchemy URI，前綴需用 `mysql+pymysql`：
+連線時於 UI 填入 SQLAlchemy URI：
 
-	mysql+pymysql://<帳號>:<密碼>@<host>:3306/<資料庫名>
+	mysql://<帳號>:<密碼>@<host>:3306/<資料庫名>
 
 對照 `mysql.yml` 的設定，直接填以下任一即可：
 
 	# root 帳號
-	mysql+pymysql://root:ppWgnb_mfGe2m_@mysql_mysql:3306/mydb
+	mysql://root:ppWgnb_mfGe2m_@mysql_mysql:3306/mydb
+
+	# 一般帳號（權限限於 mydb）
+	mysql://user:ppWgnb_mfGe2m_@mysql_mysql:3306/mydb
 
 各欄位來源（皆來自 `mysql.yml`）：
 

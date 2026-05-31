@@ -1,8 +1,10 @@
 # Docker Swarm 部署方式：docker stack deploy -c superset.yml superset
 # 需先建立 overlay 網路：docker network create -d overlay my_swarm_network
 #
-# 教學精簡版：使用官方 apache/superset 映像，metadata 採用映像內建的 SQLite
-# （存放於 superset_home volume，免裝 MySQL driver、免客製映像、免預建資料庫）
+# 教學精簡版：使用官方 apache/superset -dev 映像，metadata 採用映像內建的 SQLite
+# （存放於 superset_home volume，免客製映像、免預建資料庫）
+# 採用 -dev 映像（非 lean 版）：內建 mysqlclient / psycopg2 等多種 DB driver，
+# 故 "Connect a database" 可直接選 MySQL 等資料庫，免額外 pip install。
 #
 # 單一服務設計：啟動時「先初始化、再啟動 web server」，依序執行避免
 # 多個程序同時寫入 SQLite 造成 database is locked。
@@ -13,7 +15,7 @@ version: '3'  # 指定 docker-compose 檔案版本（3 以上支援 Swarm 部署
 services:
 
   superset:
-    image: apache/superset:4.1.4  # 官方 superset 映像檔（pinned 穩定版）
+    image: apache/superset:4.1.4-dev  # 官方 dev 映像（內建 mysqlclient 等多種 DB driver）
     user: "root"  # 以 root 執行，避免 volume 權限問題
     environment:
       SUPERSET_SECRET_KEY: 'CHANGE_ME_TO_A_RANDOM_SECRET'  # 安全金鑰，正式環境請改成隨機字串
@@ -21,16 +23,13 @@ services:
       SUPERSET_ENV: development   # Superset 執行環境
       SUPERSET_PORT: 8088         # Superset 服務埠
     command: >
-      sh -c "pip install --no-cache-dir PyMySQL &&
-      superset db upgrade &&
+      sh -c "superset db upgrade &&
       superset fab create-admin
       --username admin --firstname Superset --lastname Admin
       --email admin@superset.com --password admin || true &&
       superset init &&
       /usr/bin/run-server.sh"
       # 依序執行（避免 SQLite 鎖衝突）：
-      # 0. pip install PyMySQL：補上 MySQL driver（官方映像未內建），
-      #    讓 "Connect a database" 清單出現 MySQL；PyMySQL 為純 Python 免編譯
       # 1. db upgrade：建立 / 升級 metadata 資料表
       # 2. create-admin：建立預設管理者 admin / admin（已存在則略過，故加 || true）
       # 3. init：初始化角色與權限

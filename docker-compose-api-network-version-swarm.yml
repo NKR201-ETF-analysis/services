@@ -20,8 +20,11 @@ services:
       - TZ=Asia/Taipei  # 設定時區為台北（UTC+8）
     networks:
       - my_swarm_network  # 將此服務連接到 my_swarm_network 網路
+      - my_attachable_network
 
 networks:
   my_swarm_network:
     # 加入已經存在的網路
+    external: true
+  my_attachable_network:
     external: true
